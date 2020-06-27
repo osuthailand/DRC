@@ -49,12 +49,17 @@ class IRCClient(irc.bot.SingleServerIRCBot):
 			print("@{} {}:{} => {}".format(self.usr_name, e.target, e.source, msg))
 
 	def isOnline(self):
-		req = requests.get("http://c.{}/api/v1/isOnline?u={}".format(glob.settings["osu_srv_frontend"], self.usr_name))
+		req = requests.get("https://c.{}/api/v1/isOnline?u={}".format(glob.settings["osu_srv_frontend"], self.usr_name))
 		status = json.loads(req.text)
 		return status["result"]
 
 	def tryReconnect(self):
 		print("{}: Checking if user is online...".format(self.usr_name))
+		# i know its a bad fix but meh, whatever.
+		if self.usr_name == "Sunhapan":
+			self.jump_server()
+			print("{}: Reconnecting".format(self.usr_name))
+			return True
 		if not self.isOnline():
 			self.jump_server()
 			print("{}: Reconnecting".format(self.usr_name))
@@ -96,11 +101,11 @@ class IRCClientBot(IRCClientUser):
 
 	def on_privmsg(self, c, e):
 		IRCClient.on_privmsg(self, c, e)
-		c.privmsg(e.source, "This is a bot account. All messages will be ignored.")
+		c.privmsg(e.source, "I'm the IRC bot... Leave me alone. I'm doing my job.")
 """
 	def on_part(self, c, e):
 		if e.source in glob.irc_snowflake_link.keys(): #Check if its one of our irc client accounts
-			req = requests.get("http://c.{}/api/v1/isOnline?u={}".format(glob.settings["osu_srv_frontend"], e.source))
+			req = requests.get("https://c.{}/api/v1/isOnline?u={}".format(glob.settings["osu_srv_frontend"], e.source))
 			status = json.loads(req.text)
 			if not status["result"]:
 				glob.irc_clients[glob.irc_snowflake_link[e.source]].connect()
