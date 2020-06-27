@@ -9,17 +9,18 @@ from objects import user as userObject
 
 @glob.discordclient.event
 async def on_ready():
+	await glob.discordclient.change_presence(activity=discord.Activity(name='Ainu chat', type=discord.ActivityType.watching))
 	print("Discord bot {} with id {} has logged in.".format(glob.discordclient.user.name, glob.discordclient.user.id))
 
 async def HandleCommand(msg):
 	#Handle message if discord_snowflake is in our account list
 	if msg.author.id in glob.irc_clients.keys():
-		if msg.content.startswith('.help'):
-			em = discord.Embed(description=".help       List all commands\n.status    Return status of an user ingame [.status sunpy]", colour=0x0000FF)
-			em.set_author(name="Commands", icon_url="http://i.imgur.com/CEYdeUi.png")
+		if msg.content.startswith('*help'):
+			em = discord.Embed(description="\*help       List all commands\n\*status    Return status of an user ingame [\*status aoba]", colour=0x0000FF)
+			em.set_author(name="Commands", icon_url="https://i.imgur.com/CEYdeUi.png")
 			await msg.channel.send(embed=em)
 			return True
-		elif msg.content.startswith('.status') or msg.content.startswith('.lookup'):
+		elif msg.content.startswith('*status') or msg.content.startswith('*lookup'):
 			m = msg.content.split(' ', 1)
 			if len(m) >= 2:
 				safe_usr_name = "_".join(m[1:])
@@ -33,7 +34,7 @@ async def HandleCommand(msg):
 				else:
 					await msg.channel.send("{} was not found.".format(safe_usr_name))
 			else:
-				await msg.channel.send("Missing arguments. [Usage: `.lookup sunpy`]")
+				await msg.channel.send("Missing arguments. [Usage: `\*lookup aoba`]")
 			return True
 	else:
 		return False
